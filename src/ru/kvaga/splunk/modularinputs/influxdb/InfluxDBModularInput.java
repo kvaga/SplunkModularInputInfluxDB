@@ -23,37 +23,47 @@ public class InfluxDBModularInput extends Script {
     	
     }
 
+    private final String PARAM_NAME_INFLUXDB_URL="influxdb_url";
+    private final String PARAM_NAME_INFLUXDB_LOGIN="influxdb_login";
+    private final String PARAM_NAME_INFLUXDB_PASSWORD="influxdb_password";
+    private final String PARAM_NAME_INFLUXDB_DELAY_IN_SECONDS="delay_in_seconds";
+    
     
     public Scheme getScheme() {
     	 Scheme scheme = new Scheme("InfluxDBDataSourceInput");
     	 scheme.setUseSingleInstance(true);
     	 scheme.setUseExternalValidation(false);
     	 scheme.setDescription("Uploads data from InfluxDB instance");
-    	 Argument param1 = new Argument("param1");
-    	 param1.setDataType(DataType.STRING);
-    	 param1.setDescription("Description of param1");
-//    	 param1.setName("param1_1");
-    	 param1.setRequiredOnCreate(true);
-    	 param1.setRequiredOnEdit(true);
     	 
+    	 Argument influxdbURL = new Argument(PARAM_NAME_INFLUXDB_URL);
+    	 influxdbURL.setDataType(DataType.STRING);
+    	 influxdbURL.setDescription("URL of the InfluxDB database");
+    	 influxdbURL.setRequiredOnCreate(true);
+    	 influxdbURL.setRequiredOnEdit(true);
+
+    	 Argument influxdbLogin = new Argument(PARAM_NAME_INFLUXDB_LOGIN);
+    	 influxdbLogin.setDataType(DataType.STRING);
+    	 influxdbLogin.setDescription("Login of the InfluxDB database (if required)");
+    	 influxdbLogin.setRequiredOnCreate(true);
+    	 influxdbLogin.setRequiredOnEdit(true);
     	 
-    	 Argument param2 = new Argument("param2");
-    	 param2.setDataType(DataType.STRING);
-    	 param2.setDescription("Description of param2");
-//    	 param2.setName("param1_1");
-    	 param2.setRequiredOnCreate(true);
-    	 param2.setRequiredOnEdit(true);
+    	 Argument influxdbPassword = new Argument(PARAM_NAME_INFLUXDB_PASSWORD);
+    	 influxdbPassword.setDataType(DataType.STRING);
+    	 influxdbPassword.setDescription("Password of the InfluxDB database (if required)");
+    	 influxdbPassword.setRequiredOnCreate(true);
+    	 influxdbPassword.setRequiredOnEdit(true);
+
+    	 Argument delayInSeconds = new Argument(PARAM_NAME_INFLUXDB_DELAY_IN_SECONDS);
+    	 delayInSeconds.setDataType(DataType.NUMBER);
+    	 delayInSeconds.setDescription("How long (in seconds) a job has to wait before the next invocation");
+    	 delayInSeconds.setRequiredOnCreate(true);
+    	 delayInSeconds.setRequiredOnEdit(true);
     	 
-    	 Argument param3 = new Argument("param3");
-    	 param3.setDataType(DataType.STRING);
-    	 param3.setDescription("Description of param3");
-//    	 param3.setName("param1_1");
-    	 param3.setRequiredOnCreate(true);
-    	 param3.setRequiredOnEdit(true);
     	 ArrayList<Argument> args = new ArrayList<Argument>();
-    	 args.add(param1);
-    	 args.add(param2);
-    	 args.add(param3);
+    	 args.add(influxdbURL);
+    	 args.add(influxdbLogin);
+    	 args.add(influxdbPassword);
+    	 args.add(delayInSeconds);
     	 scheme.setArguments(args);
 			return scheme;
     }
@@ -71,16 +81,20 @@ public class InfluxDBModularInput extends Script {
              // We get the parameters for each input and start a new thread for each one. 
              // All the real work happens in the class for event generation.
     		 
-    		 
-             String index = ((SingleValueParameter)inputs.getInputs().get(inputName).get("param1")).getValue();
-              String sourcetype = ((SingleValueParameter)inputs.getInputs().get(inputName).get("param2")).getValue();
+             String influxDBURL = ((SingleValueParameter)inputs.getInputs().get(inputName).get(PARAM_NAME_INFLUXDB_URL)).getValue();
+             String influxDBLogin = ((SingleValueParameter)inputs.getInputs().get(inputName).get(PARAM_NAME_INFLUXDB_LOGIN)).getValue();
+             String influxDBPassword = ((SingleValueParameter)inputs.getInputs().get(inputName).get(PARAM_NAME_INFLUXDB_PASSWORD)).getValue();
+             int influxDBDelayInSeconds = ((SingleValueParameter)inputs.getInputs().get(inputName).get(PARAM_NAME_INFLUXDB_DELAY_IN_SECONDS)).getInt();
+             
 //String index="index_1";
 //String sourcetype="sourcetype1";
-             Thread t = new Thread(new InfluxDBEventsUpload(ew, inputName, index, sourcetype));
+             Thread t = new Thread(new InfluxDBEventsUpload(ew, inputName, influxDBURL, influxDBLogin, influxDBPassword, influxDBDelayInSeconds));
              t.run();
          }
+    	 
     	}catch(Exception ex) {
     		ew.synchronizedLog(EventWriter.ERROR, ex.getMessage());
+    		ex.printStackTrace();
     	}
     }
 }

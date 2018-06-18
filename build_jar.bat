@@ -11,7 +11,7 @@ echo Build and update application's jar file
 echo =======================================
 echo Update all other application's files
 copy %SRC_APP_FILES_PATH%\app.conf "%SPLUNK_APP_PATH%\default" /Y
-copy %SRC_APP_FILES_PATH%\README\* "%SPLUNK_APP_PATH%\" /Y
+copy %SRC_APP_FILES_PATH%\README\* "%SPLUNK_APP_PATH%\README\" /Y
 
 echo =======================================
 echo Update shims

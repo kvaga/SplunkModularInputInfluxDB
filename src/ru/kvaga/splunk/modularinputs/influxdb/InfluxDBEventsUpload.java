@@ -6,28 +6,31 @@ import com.splunk.modularinput.EventWriter;
 import com.splunk.modularinput.MalformedDataException;
 
 class InfluxDBEventsUpload implements Runnable {
-        private String index, sourcetype;
-        EventWriter ew;
-        String inputName;
+        private String  influxDBURL, influxDBLogin, influxDBPassword;
+        int influxDBDelayInSeconds;
+        private EventWriter ew;
+        private String inputName;
 
-        public InfluxDBEventsUpload(EventWriter ew, String inputName, String index, String sourcetype) {
+        public InfluxDBEventsUpload(EventWriter ew, String inputName, String influxDBURL, String influxDBLogin, String influxDBPassword, int influxDBDelayInSeconds) {
             super();
-            this.index = index;
-            this.sourcetype = sourcetype;
+            this.influxDBURL = influxDBURL;
+            this.influxDBLogin = influxDBLogin;
+            this.influxDBPassword = influxDBPassword;
+            this.influxDBDelayInSeconds = influxDBDelayInSeconds;
             this.ew = ew;
             this.inputName = inputName;
         }
 
         public void run() {
-        	System.out.println("");
+        	
             ew.synchronizedLog(EventWriter.INFO, "Uploading InfluxDB data " + inputName +
-                    " started to index= " + index + " sourcetype=" + sourcetype   );
+                    " started for INFLUXDB_URL= " + influxDBURL + " influxDBLogin=" + influxDBLogin + " influxDBPassword=[********] + delayInSeconds="+influxDBDelayInSeconds );
 
             final Random randomGenerator = new Random();
             while (true) {
                 Event event = new Event();
                 event.setStanza(inputName);
-                event.setData("index=" + index + "sourcetype=" + sourcetype + "data: " + randomGenerator.nextInt(100));
+                event.setData("INFLUXDB_URL= " + influxDBURL + " influxDBLogin=" + influxDBLogin + " influxDBPassword=[********] + delayInSeconds="+influxDBDelayInSeconds + " data=" + randomGenerator.nextInt(100));
 
                 try {
                     ew.writeEvent(event);

@@ -1,8 +1,15 @@
 [splunk-modularinputs-influxdb://default]
-*This is a comment describing this modular input
- 
-index = <value>
-sourcetype = <value>
-param1= <value>
-param2= <value>
-param3= <value>
+*Uploads data from InfluxDB instance
+
+*URL of the InfluxDB database 
+influxdb_url=<value>
+
+*Login of the InfluxDB database (if required)
+influxdb_login=<value>
+
+*Password of the InfluxDB database (if required)
+influxdb_password=<value>
+
+*How long (in seconds) a job has to wait before the next invocation
+delay_in_seconds=<value>
+
