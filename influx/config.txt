@@ -1,0 +1,8 @@
+DBconString=jdbc:oracle:thin:@crmdbtestc.cgs.sbrf.ru:1521/crmnt
+DBdriver=oracle.jdbc.driver.OracleDriver
+DBuser=siebel
+DBpass=sbttest
+DBqueryFiles=influx/query.sql,influx/pp.sql,influx/deals.sql,influx/campaigns.sql
+InfluxURL=http://sbt-oabs-406:8086
+influxAuth=grafana:grafana
+InfluxDB=CRMK
